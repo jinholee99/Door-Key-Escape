@@ -5,10 +5,15 @@ var lockx = 500;
 var locky = 340;
 var doorx = 287.5;
 var doory = 83;
+var bsx = 415;
 var cursorChange = 0;
 var lockState = 0;
 var door = 0;
 var keyclicked = 0;
+var lock = 0;
+var bszoom = 0;
+var mzoom = 0;
+
 
 function preload()
 {
@@ -24,9 +29,19 @@ function preload()
   
   odoor = loadImage('https://dl.dropboxusercontent.com/s/uyagjotoviel65e/odoor.png');
   
-  room = loadImage('https://dl.dropboxusercontent.com/s/ma2z0775fw1n9h1/room.jpg');
+  room1 = loadImage('https://dl.dropboxusercontent.com/s/ma2z0775fw1n9h1/room.jpg');
   
   arrow = loadImage('https://dl.dropboxusercontent.com/s/yrgvkdo5pvpoc4i/arrow.png');
+
+  chair = loadImage('https://dl.dropboxusercontent.com/s/i72czmnpumq329h/Chair.png');
+  
+  room2 = loadImage('https://dl.dropboxusercontent.com/s/1u9h8numfvfappt/Room2.jpg');
+  
+  bookshelf = loadImage('https://dl.dropboxusercontent.com/s/sl6jmc0w5jlcwmc/bookshelf.jpg');
+  
+  magnify = loadImage('https://dl.dropboxusercontent.com/s/f04zsj9omqph6nt/magnify.png');
+
+  monitor = loadImage('https://dl.dropboxusercontent.com/s/6n28rm3zt47ifhx/monitor.png');
 }
 
 function setup()
@@ -61,14 +76,15 @@ function draw()
 function p1()
 {
 	background(100,100,100);
-	image(room,0,0,800,600);
+    
+	image(room1,0,0,800,600);
 	image(cdoor,doorx,doory,300,516);
 	if (door == 1)
 	{
 		image(odoor,287.5,83,300,516);
 		image(arrow,475,300,25,25);
 	}
-  
+    
 	inv();
 	cursor(ARROW);
   
@@ -135,7 +151,10 @@ function p1()
 	if (cursorChange == 1)
 	{
 		noCursor();
-		image(lockkey,mouseX,mouseY)
+    if (lockState == 0)
+    {
+		  image(lockkey,mouseX,mouseY);
+    }
 		ui();
 		keyx = 1000;
 		keyy = 1000;
@@ -145,6 +164,7 @@ function p1()
 	{
 		image(unlock,500,340,25,25);
 		door = 1;
+    cursor(ARROW);
 	}
 	
 	if (door == 1)
@@ -159,6 +179,97 @@ function p2()
 {
 	background(175,175,175);
 	cursor(ARROW);
+  image(room2,0,0);
+  image(bookshelf,bsx,130,250,372);
+  image(magnify,bsx,100,30,30);
+  image(monitor,100,350,200,150);
+  
+  //SHELF
+  if (bsx == 415 && mouseX >= 415 && mouseX <= 675 && mouseY >= 130 && mouseY <= 502 && bszoom == 0 && mzoom == 0)
+  {
+    cursor(HAND);
+    if (mouseIsPressed)
+    {
+      lock = 1;
+    }
+  }
+  else if (bsx == 550 && mouseX >= 550 && mouseX <= 800 && mouseY >= 130 && mouseY <= 502 && bszoom == 0 && mzoom == 0)
+  {
+    cursor(HAND);
+    if (mouseIsPressed)
+    { 
+      lock = 1;
+    }
+  }
+  
+  //MAGNIFY
+  if (bsx == 415 && mouseX >= 415 && mouseX <= 445 && mouseY >= 100 && mouseY <= 130 && bszoom == 0)
+  {
+    cursor(HAND);
+    if (mouseIsPressed)
+    {
+      lock = 1;
+    }
+  }
+  else if (bsx == 550 && mouseX >= 550 && mouseX <= 580 && mouseY >= 100 && mouseY <= 130 && bszoom == 0)
+  {
+    cursor(HAND);
+    if (mouseIsPressed)
+    {
+      lock = 1;
+    }
+  }
+  
+  //SHELF ZOOM
+  if (bszoom == 1)
+  {
+    image(bookshelf,0,0,500,744);
+    fill(150,50,50);
+    stroke(0);
+    rect(550,50,100,50);
+    fill(255);
+    text("X",600,75);
+    
+    if (mouseX >= 550 && mouseX <= 650 && mouseY >= 50 && mouseY <= 100 && mzoom == 0)
+    {
+      cursor(HAND);
+      if (mouseIsPressed)
+      {
+        bszoom = 0;
+      }
+    }
+  }
+  
+  //MONITOR
+  if (mouseX >= 100 && mouseX <= 300 && mouseY >= 350 && mouseY <= 500 && mzoom == 0 && bszoom == 0)
+  {
+    cursor(HAND);
+    if (mouseIsPressed)
+    {
+      mzoom = 1;
+    }
+  }
+  
+  //MONITOR ZOOM
+  if (mzoom == 1)
+  {
+    image(monitor,100,100,600,400);
+    fill(150,50,50);
+    rect(700,100,100,50);
+    fill(255);
+    text("X",750,125);
+    
+    if (mouseX >= 700 && mouseX <= 800 && mouseY >= 100 && mouseY <= 150 && bszoom == 0)
+    {
+      cursor(HAND);
+      if (mouseIsPressed)
+      {
+        mzoom = 0;
+      }
+    }
+  }
+  
+  inv();
 }
 
 function p3()
@@ -182,15 +293,35 @@ function ui()
 
 function mouseReleased()
 {
-
+  //SHELF
+  if (bsx == 415 && mouseX >= 415 && mouseX <= 675 && mouseY >= 130 && mouseY <= 502 && lock == 1)
+  {
+    lock = 0;
+    bsx = 550;
+  }
+  else if (bsx == 550 && mouseX >= 550 && mouseX <= 800 && mouseY >= 130 && mouseY <= 502 && lock == 1)
+  {
+    lock = 0;
+    bsx = 415;
+  }
+  
+  //MAGNIFY
+  if (bsx == 415 && mouseX >= 415 && mouseX <= 445 && mouseY >= 100 && mouseY <= 130 && lock == 1)
+  {
+    lock = 0;
+    bszoom = 1;
+  }
+  else if (bsx == 550 && mouseX >= 550 && mouseX <= 580 && mouseY >= 100 && mouseY <= 130 && lock == 1)
+  {
+    lock = 0;
+    bszoom = 1;
+  }
 }
 
 function intro()
 {
 	background(50,50,50);
 	image(creepyintro,0,0,800,600);
-
-
   
 	fill(150,0,0);
 	stroke(250,0,0);
